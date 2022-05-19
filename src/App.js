@@ -8,12 +8,7 @@ import { Chord } from 'chordsheetjs';
 function App() {
 
     const [key, setKey] = useState(0);
-
-    const handleChange = (e) => {
-        setKey(e.target.value);
-    }
-
-    const chordSheet = `
+    const [chord, setChord] = useState(`
     {title: Oh Lord You're Beautiful}
     {subtitle: Keith Green}
     {key: C}
@@ -26,7 +21,16 @@ function App() {
     I want to [F]take Your [Dm]Word and [G]shine it all a[C]round,
     First help me [F]just [Dm]to live it [G]Lord.
     And when I'm [F]doing [Dm]well help me to [G]never seek a [C]crown,
-    For my [Dm]reward is [G]bringing glory to [G]You.`.substring(1);
+    For my [Dm]reward is [G]bringing glory to [G]You.`);
+
+    const handleChange = (e) => {
+        setKey(e.target.value);
+    }
+    // const handleChord = (e) => {
+    //     setChord(e.target.value);
+    // }
+
+    const chordSheet = chord.substring(1);
     let parser = new ChordSheetJS.ChordProParser();
     let song = parser.parse(chordSheet);
     let newSong = song.setCapo(key);
@@ -84,22 +88,22 @@ function App() {
     //         }),
     //     )
 
-        // const dim = { w: 45, h: 55 }
-        // new ChordBox(container, {
-        //     width: dim.w,
-        //     height: dim.h,
-        //     showTuning: false,
-        //     numFrets: 4,
-        //     defaultColor: 'black',
-        // }).draw(toChord(notes[k]))
+    // const dim = { w: 45, h: 55 }
+    // new ChordBox(container, {
+    //     width: dim.w,
+    //     height: dim.h,
+    //     showTuning: false,
+    //     numFrets: 4,
+    //     defaultColor: 'black',
+    // }).draw(toChord(notes[k]))
 
-        // const s = container.querySelector('svg')
-        // s.setAttribute('height', dim.h - 15)
-        // s.setAttribute('viewBox', `2 5 ${dim.w} ${dim.h - 15}`)
+    // const s = container.querySelector('svg')
+    // s.setAttribute('height', dim.h - 15)
+    // s.setAttribute('viewBox', `2 5 ${dim.w} ${dim.h - 15}`)
 
-        // container.appendChild(document.createTextNode(k))
+    // container.appendChild(document.createTextNode(k))
 
-        // return container
+    // return container
     // }
 
     // document.querySelectorAll('.chord').forEach(chord => {
@@ -123,10 +127,15 @@ function App() {
 
     return (
         <div className="App">
+            {/* <label>
+                Chord:
+                <input type="text" value={chord} onChange={handleChord} />
+                <button type="submit">submit</button>
+            </label> */}
             <label>
                 key:
                 <select onChange={(e) => handleChange(e)}>
-                    <option value="0">{Chord.parse(song.metadata.key).transpose(0).toString()}</option>
+                    <option value="0">Original key: {Chord.parse(song.metadata.key).transpose(0).toString()}</option>
                     <option value="11">{Chord.parse(song.metadata.key).transpose(1).toString()}</option>
                     <option value="10">{Chord.parse(song.metadata.key).transpose(2).toString()}</option>
                     <option value="9">{Chord.parse(song.metadata.key).transpose(3).toString()}</option>
