@@ -8,16 +8,21 @@ import { Chord } from 'chordsheetjs';
 function App() {
 
     const [key, setKey] = useState(0);
+    const [chordInput, setChordInput] = useState(``);
     const [chord, setChord] = useState(`
     {title: Oh Lord You're Beautiful}
     {subtitle: Keith Green}
     {key: C}
+    {tempo: 70}
+    {time: 4/4}
+
     {Verse}
     Oh [C]Lord, You're [F]Beauti[G]ful,
     Youre [C]Face is [F]all I [G]seek,
     And [C]when your [F]eyes are [Am]on [G]this [F]child,
     Your [Dm]Grace a[G]bounds to [C]me.
-    {Chorus}
+
+    {chorus}
     I want to [F]take Your [Dm]Word and [G]shine it all a[C]round,
     First help me [F]just [Dm]to live it [G]Lord.
     And when I'm [F]doing [Dm]well help me to [G]never seek a [C]crown,
@@ -26,11 +31,16 @@ function App() {
     const handleChange = (e) => {
         setKey(e.target.value);
     }
-    // const handleChord = (e) => {
-    //     setChord(e.target.value);
-    // }
+    const handleChord = (e) => {
+        e.preventDefault();
+        setChordInput(e.target.value);
+    }
+    const handleChordSubmit = (e) => {
+        e.preventDefault();
+        setChord(chordInput);
+    }
 
-    const chordSheet = chord.substring(1);
+    const chordSheet = chord.substring(0);
     let parser = new ChordSheetJS.ChordProParser();
     let song = parser.parse(chordSheet);
     let newSong = song.setCapo(key);
@@ -123,32 +133,28 @@ function App() {
     //     }
     // })
 
-
-
     return (
         <div className="App">
-            {/* <label>
-                Chord:
-                <input type="text" value={chord} onChange={handleChord} />
-                <button type="submit">submit</button>
-            </label> */}
-            <label>
-                key:
-                <select onChange={(e) => handleChange(e)}>
-                    <option value="0">Original key: {Chord.parse(song.metadata.key).transpose(0).toString()}</option>
-                    <option value="11">{Chord.parse(song.metadata.key).transpose(1).toString()}</option>
-                    <option value="10">{Chord.parse(song.metadata.key).transpose(2).toString()}</option>
-                    <option value="9">{Chord.parse(song.metadata.key).transpose(3).toString()}</option>
-                    <option value="8">{Chord.parse(song.metadata.key).transpose(4).toString()}</option>
-                    <option value="7">{Chord.parse(song.metadata.key).transpose(5).toString()}</option>
-                    <option value="6">{Chord.parse(song.metadata.key).transpose(6).toString()}</option>
-                    <option value="5">{Chord.parse(song.metadata.key).transpose(7).toString()}</option>
-                    <option value="4">{Chord.parse(song.metadata.key).transpose(8).toString()}</option>
-                    <option value="3">{Chord.parse(song.metadata.key).transpose(9).toString()}</option>
-                    <option value="2">{Chord.parse(song.metadata.key).transpose(10).toString()}</option>
-                    <option value="1">{Chord.parse(song.metadata.key).transpose(11).toString()}</option>
-                </select>
-            </label>
+            <form onSubmit={(chordInput) => handleChordSubmit(chordInput)}>
+                <label htmlFor="chordInput">Chord:</label>
+                <textarea id="chordInput" value={chordInput} onChange={handleChord} />
+                <input type="submit" value="Submit" />
+            </form>
+            <label htmlFor="setCapo">key:</label>
+            <select id="setCapo" onChange={(e) => handleChange(e)}>
+                <option value="0">Original key: {Chord.parse(song.metadata.key).transpose(0).toString()}</option>
+                <option value="11">{Chord.parse(song.metadata.key).transpose(1).toString()}</option>
+                <option value="10">{Chord.parse(song.metadata.key).transpose(2).toString()}</option>
+                <option value="9">{Chord.parse(song.metadata.key).transpose(3).toString()}</option>
+                <option value="8">{Chord.parse(song.metadata.key).transpose(4).toString()}</option>
+                <option value="7">{Chord.parse(song.metadata.key).transpose(5).toString()}</option>
+                <option value="6">{Chord.parse(song.metadata.key).transpose(6).toString()}</option>
+                <option value="5">{Chord.parse(song.metadata.key).transpose(7).toString()}</option>
+                <option value="4">{Chord.parse(song.metadata.key).transpose(8).toString()}</option>
+                <option value="3">{Chord.parse(song.metadata.key).transpose(9).toString()}</option>
+                <option value="2">{Chord.parse(song.metadata.key).transpose(10).toString()}</option>
+                <option value="1">{Chord.parse(song.metadata.key).transpose(11).toString()}</option>
+            </select>
             <div id="container">
                 <div dangerouslySetInnerHTML={createMarkup()} />
             </div>
