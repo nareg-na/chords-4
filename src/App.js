@@ -7,6 +7,7 @@ import { Chord } from 'chordsheetjs';
 
 function App() {
 
+    const [error, setError] = useState();
     const [key, setKey] = useState(0);
     const [chordInput, setChordInput] = useState(``);
     const [chord, setChord] = useState(`
@@ -37,7 +38,24 @@ function App() {
     }
     const handleChordSubmit = (e) => {
         e.preventDefault();
-        setChord(chordInput);
+        let chordSheet2 = chordInput.substring(0);
+        let parser2 = new ChordSheetJS.ChordProParser();
+        let song2 = parser2.parse(chordSheet2);
+
+        if (chordInput.length == 0) {
+            setError("Input field can't be empty");
+        } else if (song2.chords.length == 0) {
+            setError("No chords found");
+        } else if (!song2.metadata.title) {
+            setError("No title found");
+        } else if (!song2.metadata.subtitle) {
+            setError("No subtitle found"); // author
+        } else if (!song2.metadata.key) {
+            setError("No key found");
+        } else {
+            setError(null);
+            setChord(chordInput);
+        }
     }
 
     const chordSheet = chord.substring(0);
@@ -51,94 +69,13 @@ function App() {
         return { __html: disp };
     }
 
-    // function toChord(numstr, translFrets = 0) {
-    //     if (numstr.length !== 6) throw new Error('wrong length!')
-    //     const fingers = numstr
-    //         .split('')
-    //         .reverse()
-    //         .map(f => (f === 'x' ? 'x' : Number(f)))
-    //     const min = Math.min(...fingers.filter(f => f !== 'x'))
-    //     if (min === 0) return { chord: fingers.map((s, i) => [i + 1, s]) }
-    //     else
-    //         return {
-    //             position: min + translFrets,
-    //             chord: fingers
-    //                 .map((s, i) => [i + 1, s])
-    //                 .filter(([j, s]) => s !== min)
-    //                 .map(([j, s]) => [j, s - min + 1]),
-    //             barres: [{ fromString: 6, toString: 1, fret: 1 }],
-    //         }
-    // }
-
-    // const notes = {
-    //     C: 'x32010',
-    //     D: 'xx0232',
-    //     E: '022100',
-    //     F: '133211',
-    //     // 'F#': ('133211', 1),
-    //     // G: ('133211', 2),
-    //     G: '320003',
-    //     A: '02220x',
-
-    //     Cm: 'x31013',
-    //     Dm: 'xx0231',
-    //     Em: '022000',
-    //     Fm: '133211',
-    //     Gm: '320033',
-    //     Am: '02210x',
-
-    //     'C/G': '332010',
-    //     'C/E': '032013',
-    // }
-
-    // function draw(k, el = document.body) {
-    //     const container = el.appendChild(
-    //         h('div', {
-    //             className: `chord-container chord-${k}`,
-    //         }),
-    //     )
-
-    // const dim = { w: 45, h: 55 }
-    // new ChordBox(container, {
-    //     width: dim.w,
-    //     height: dim.h,
-    //     showTuning: false,
-    //     numFrets: 4,
-    //     defaultColor: 'black',
-    // }).draw(toChord(notes[k]))
-
-    // const s = container.querySelector('svg')
-    // s.setAttribute('height', dim.h - 15)
-    // s.setAttribute('viewBox', `2 5 ${dim.w} ${dim.h - 15}`)
-
-    // container.appendChild(document.createTextNode(k))
-
-    // return container
-    // }
-
-    // document.querySelectorAll('.chord').forEach(chord => {
-    //     const k = chord.innerText.trim()
-    //     const row = chord.parentNode.parentNode
-    //     if (notes[k]) {
-    //         chord.classList.add('clickable')
-
-    //         chord.addEventListener('click', () => {
-    //             if (chord.displayedChord) {
-    //                 chord.displayedChord.parentNode.removeChild(chord.displayedChord)
-    //                 chord.displayedChord = null
-    //             } else {
-    //                 chord.displayedChord = draw(k, row)
-    //             }
-    //         })
-    //     }
-    // })
-
     return (
         <div className="App">
             <form onSubmit={(chordInput) => handleChordSubmit(chordInput)}>
                 <label htmlFor="chordInput">Chord:</label>
                 <textarea id="chordInput" value={chordInput} onChange={handleChord} />
                 <input type="submit" value="Submit" />
+                {error && <p>{error}</p>}
             </form>
             <label htmlFor="setCapo">key:</label>
             <select id="setCapo" onChange={(e) => handleChange(e)}>
